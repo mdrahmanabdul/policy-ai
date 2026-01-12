@@ -1,5 +1,6 @@
 package org.policyai.controllers;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.policyai.dtos.FileUploadResponseDTO;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import io.jsonwebtoken.lang.Arrays;
 
 @RestController
 @RequestMapping("/policy-ai/files")
@@ -26,7 +26,7 @@ public class FileProcessingController {
 	private static final List<String> ALLOWED_EXTENSIONS = Arrays.asList(new String[] { "pdf", "docx", "doc", "txt" });
 	private static final long MAX_FILE_SIZE = 10*1024*1024;
 	
-	@PostMapping("/upload")
+	@PostMapping(value="/upload",consumes = "multipart/form-data")
 	public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file){
 		try {
 			
