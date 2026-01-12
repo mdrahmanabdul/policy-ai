@@ -54,23 +54,8 @@ No more “someone must know this” conversations.
 ---
 
 ## 🏗 Architecture Overview
+<img width="6730" height="5695" alt="ArchitectureOfPolicyAi" src="https://github.com/user-attachments/assets/809cc333-2e7d-4b9c-9f37-d3ded8e82b23" />
 
-Upload Document  
-↓  
-Text Extraction (Apache Tika / OCR)  
-↓  
-Cleaning & Normalization  
-↓  
-Chunking  
-↓  
-Embedding Generation  
-↓  
-Vector Database  
-↓  
-User Query  
-→ Semantic Search  
-→ LLM  
-→ Answer  
 
 
 Think of it as:  
