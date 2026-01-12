@@ -73,7 +73,7 @@ public class FileProcessingServiceImpl implements FileProcessingService{
         );
     }
 	
-	//helper functions
+	//helper function
 		//function1: I will be getting file extention of the uploaded file in this function
 		private String getFileExtension(String fileName) {
 			int lastIndexOfDot = fileName.lastIndexOf('.');
