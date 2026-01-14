@@ -1,12 +1,13 @@
 package org.policyai.serviceimpl;
 
+import org.policyai.services.EmbeddingService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 
 @Service
-public class EmbeddingServiceImpl {
+public class EmbeddingServiceImpl implements EmbeddingService{
 
     private final OpenAiEmbeddingModel embeddingModel;
 

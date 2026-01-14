@@ -11,9 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.policyai.constants.FileConstants;
 import org.policyai.dtos.FileUploadResponseDTO;
 import org.policyai.models.FileMetaData;
 import org.policyai.repos.FileMetaDataRepo;
+import org.policyai.services.ChromaVectorStoreService;
+import org.policyai.services.EmbeddingService;
 import org.policyai.services.FileProcessingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,23 +34,24 @@ public class FileProcessingServiceImpl implements FileProcessingService{
 	private final FileMetaDataRepo fileMetadataRepository;
 	private final TextExtractorServiceImpl textExtractionService;
 	private final LangchainChunkingServiceImpl langchainChunkingService;
-	private final EmbeddingServiceImpl embeddingService;
-	private final ChromaVectorStoreServiceImpl chromaServiceImpl;
+	private final EmbeddingService embeddingService;
+	private final ChromaVectorStoreService chromaVectorStoreService;
 	private final Logger logger = LoggerFactory.getLogger(FileProcessingServiceImpl.class);
 	
 	public FileProcessingServiceImpl(FileMetaDataRepo fileMetadataRepository,TextExtractorServiceImpl textExtractionService,
-			LangchainChunkingServiceImpl langchainChunkingService,EmbeddingServiceImpl embeddingService,
-			ChromaVectorStoreServiceImpl chromaServiceImpl) {
+			LangchainChunkingServiceImpl langchainChunkingService,EmbeddingService embeddingService,
+			ChromaVectorStoreService chromaVectorStoreService) {
 		this.fileMetadataRepository=fileMetadataRepository;
 		this.textExtractionService=textExtractionService;
 		this.langchainChunkingService=langchainChunkingService;
 		this.embeddingService=embeddingService;
-		this.chromaServiceImpl=chromaServiceImpl;
+		this.chromaVectorStoreService=chromaVectorStoreService;
 	}
 	
 	
 	@Value("${file.upload.dir:uploads}")
     private String uploadDir;
+	
 	
 	
 	public FileUploadResponseDTO storeFile(MultipartFile file) throws IOException {
@@ -80,6 +84,10 @@ public class FileProcessingServiceImpl implements FileProcessingService{
 	    }
 	    //We are making chunks of the text we have extracted using langchain
 	    List<String> chunks = langchainChunkingService.chunk(extractedText);
+	    System.out.println("Printing Chunks : ");
+	    for(int i=0;i<chunks.size();i++) {
+	    	System.out.println("Chunk "+i+" : "+chunks.get(i));
+	    }
 	    List<String> ids = new ArrayList<>();
 	    List<float[]> embeddings = new ArrayList<>();
 	    List<String> documents = new ArrayList<>();
@@ -99,7 +107,7 @@ public class FileProcessingServiceImpl implements FileProcessingService{
 	    }
 
 	    // Store in Chroma
-	    chromaServiceImpl.storeEmbeddings(
+	    chromaVectorStoreService.storeEmbeddings(
 	            "policy-documents",
 	            ids,
 	            embeddings,
@@ -131,7 +139,7 @@ public class FileProcessingServiceImpl implements FileProcessingService{
 	}
 
 	// 
-		private String getFileExtension(String fileName) {
+		public String getFileExtension(String fileName) {
 			int lastIndexOfDot = fileName.lastIndexOf('.');
 			if(lastIndexOfDot==-1) {
 				return "";
@@ -140,11 +148,17 @@ public class FileProcessingServiceImpl implements FileProcessingService{
 		}
 		
 		//function2: We will be cleaning all the noise from the extracted text
-		private String cleanText(String text) {
+		public String cleanText(String text) {
 		    text = text.replaceAll("", "-");
 		    text = text.replaceAll("\\r?\\n+", "\n");
 		    text = text.replaceAll("[ ]{2,}", " ");
 		    return text.trim();
+		}
+		
+		//function2: I will check whether the file is of type allowed extension or not
+		public boolean isValidFileExtension(String fileName) {
+			String extension = getFileExtension(fileName);
+			return FileConstants.ALLOWED_EXTENSIONS.contains(extension.toLowerCase());
 		}
 
 }

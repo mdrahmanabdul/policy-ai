@@ -3,11 +3,12 @@ package org.policyai.serviceimpl;
 import java.util.List;
 import java.util.Map;
 
+import org.policyai.services.ChromaVectorStoreService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class ChromaVectorStoreServiceImpl {
+public class ChromaVectorStoreServiceImpl implements ChromaVectorStoreService{
 
 	private RestTemplate restTemplate = new RestTemplate();
 	private final String CHROMA_URL = "http://localhost:8000";
