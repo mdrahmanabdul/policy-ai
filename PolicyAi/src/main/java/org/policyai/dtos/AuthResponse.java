@@ -5,6 +5,7 @@ public class AuthResponse {
     private String token;
     private String username;
     private String role;
+    
 	public AuthResponse(String token, String username, String role) {
 		super();
 		this.token = token;
