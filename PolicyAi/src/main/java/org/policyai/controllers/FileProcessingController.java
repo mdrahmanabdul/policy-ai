@@ -5,6 +5,7 @@ import org.policyai.dtos.FileUploadResponseDTO;
 import org.policyai.services.FileProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ public class FileProcessingController {
 	private FileProcessingService fileProcessingService;
 	
 	
-	@PostMapping(value="/upload",consumes = "multipart/form-data")
+	@PostMapping(value="/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file){
 		try {
 			
@@ -48,6 +49,7 @@ public class FileProcessingController {
 			FileUploadResponseDTO response=fileProcessingService.storeFile(file);
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("Failed to upload file "+e.getMessage());
 		}
